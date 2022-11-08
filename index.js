@@ -20,6 +20,7 @@ async function run() {
     try {
         const placeCollection = client.db('travelBD').collection('places');
         const reviewCollection = client.db('travelBD').collection('review');
+        const purchaseCollection = client.db('travelBD').collection('purchase');
 
         app.get('/places', async (req, res) => {
             const query = {};
@@ -34,6 +35,33 @@ async function run() {
             const place = await placeCollection.findOne(query)
             res.send(place)
         })
+
+        //purchase api
+        app.get('/purchase', async (req, res) => {
+            // console.log(req.query)
+            let query = {};
+            if (req.query.email) {
+                query = {
+                    email: req.query.email
+                }
+            }
+            const cursor = purchaseCollection.find(query);
+            const purchase = await cursor.toArray();
+            res.send(purchase)
+        })
+
+        app.post('/purchase', async (req, res) => {
+            const purchase = req.body;
+            const result = await purchaseCollection.insertOne(purchase);
+            res.send(result);
+        })
+        app.delete('/purchase/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await purchaseCollection.deleteOne(query);
+            res.send(result)
+        })
+
 
 
         // review api
