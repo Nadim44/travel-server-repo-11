@@ -21,7 +21,6 @@ function verifyJWT(req, res, next) {
     // console.log(req.headers.authorization)
     const authHeader = req.headers.authorization;
 
-
     if (!authHeader) {
         return res.status(401).send({ message: 'unauthorized access' })
     }
@@ -38,10 +37,14 @@ function verifyJWT(req, res, next) {
 
 async function run() {
     try {
+
         const placeCollection = client.db('travelBD').collection('places');
         const reviewCollection = client.db('travelBD').collection('review');
         const purchaseCollection = client.db('travelBD').collection('purchase');
+        const othersCollection = client.db('travelBD').collection('others');
 
+
+        // jwt API
         app.post('/jwt', (req, res) => {
             const user = req.body
             // console.log(user)
@@ -50,6 +53,7 @@ async function run() {
 
         })
 
+        // places api
         app.get('/places', async (req, res) => {
             const query = {};
             const cursor = placeCollection.find(query)
@@ -128,6 +132,15 @@ async function run() {
             const query = { _id: ObjectId(id) };
             const result = await reviewCollection.deleteOne(query);
             res.send(result);
+        })
+
+
+        // other api
+        app.get('/others', async (req, res) => {
+            const query = {}
+            const cursor = othersCollection.find(query)
+            const others = await cursor.toArray();
+            res.send(others)
         })
 
 
