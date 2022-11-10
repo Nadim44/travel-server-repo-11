@@ -72,7 +72,6 @@ async function run() {
         app.get('/purchase', verifyJWT, async (req, res) => {
             // console.log(req.headers.authorization)
             const decoded = req.decoded;
-            // console.log('inside purchase api', decoded)
 
             if (decoded.email !== req.query.email) {
                 res.status(403).send({ message: 'unauthorized access' })
